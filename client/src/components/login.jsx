@@ -15,7 +15,7 @@ const Login = () => {
     // e.preventDefault();
     try {
       await axios.post("http://localhost:8000/login", values);
-      setError("User Added Successfully");
+      setError("Loggedin Successfully");
     } catch (e) {
       console.error("error posting data", e);
       if (e.response.status === 400) {
