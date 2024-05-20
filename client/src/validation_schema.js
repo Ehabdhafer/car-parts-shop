@@ -18,8 +18,12 @@ export const validationSchema = Yup.object().shape({
   password: Yup.string()
     .required("Password is required")
     .min(6, "Password must be at least 6 characters")
-    .max(40, "Password must be at most 40 characters"),
+    .max(30, "Password must be at most 30 characters"),
   confirm_password: Yup.string()
     .oneOf([Yup.ref("password"), null], "Passwords must match")
     .required("Confirm password is required"),
+  marketing: Yup.boolean(),
+  terms: Yup.boolean()
+    .required("You must accept the terms and conditions")
+    .oneOf([true], "You must accept the terms and conditions"),
 });

@@ -1,24 +1,22 @@
 import axios from "axios";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import { validationSchema } from "../validation_schema";
 
 const Signup = () => {
   const [error, setError] = useState("");
-  const [formData, setFormData] = useState({
+  const initialValues = {
     first_name: "",
     last_name: "",
     email: "",
     password: "",
-  });
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (values, { setSubmit }) => {
+    // e.preventDefault();
     try {
-      await axios.post("http://localhost:8000/register", formData);
+      await axios.post("http://localhost:8000/register", values);
       setError("User Added Successfully");
     } catch (e) {
       console.error("error posting data", e);
@@ -28,6 +26,7 @@ const Signup = () => {
         setError("an error occurred, please try again");
       }
     }
+    setSubmit(false);
   };
 
   return (
@@ -106,86 +105,117 @@ const Signup = () => {
           Sign up with Google
         </button>
         <p className="pb-4">---------------- OR ----------------</p>
-        <div>
-          <input
-            type="text"
-            name="first_name"
-            value={formData.first_name}
-            onChange={handleChange}
-            id="first_name"
-            className="mb-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-96 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="First Name *"
-            required
-          />
-          <input
-            type="text"
-            id="last_name"
-            name="last_name"
-            value={formData.last_name}
-            onChange={handleChange}
-            className="mb-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-96 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="Last Name *"
-            required
-          />
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            className="mb-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-96 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="Email Address *"
-            required
-          />
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            className="mb-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-96 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="Password *"
-            required
-          />
-          <input
-            type="password"
-            id="confirm_password"
-            name="confirm_password"
-            value={formData.confirm_password}
-            onChange={handleChange}
-            className="mb-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-96 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="Confirm Password *"
-            required
-          />
-        </div>
-        <div className="w-96 my-4">
-          <input type="checkbox" name="marketing" id="marketing" />
-          <label htmlFor="marketing" className="pl-2">
-            I agree to receive promotions, and other marketing materials via
-            e-mail from{" "}
-            <a href="/" className="text-blue-500">
-              Integrity.com
-            </a>
-          </label>
-        </div>
-        <div className="w-96 mb-4">
-          <input type="checkbox" name="terms" id="terms" />
-          <label htmlFor="terms" className="pl-2">
-            I confirm that I have read, and consent to Integrity.com{" "}
-            <a href="#" className="text-blue-500">
-              Terms and conditions and Privacy policy
-            </a>
-          </label>
-        </div>
-        <div>
-          <button
-            type="submit"
-            onClick={handleSubmit}
-            className="text-white mt-4 lg:w-72 bg-blue-500 hover:bg-blue-400/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center  "
-          >
-            Create An Account
-          </button>
-        </div>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+        >
+          {({ isSubmitting }) => (
+            <Form>
+              <div>
+                <ErrorMessage
+                  name="first_name"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
+                <Field
+                  type="text"
+                  name="first_name"
+                  className="mb-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-96 p-2.5"
+                  placeholder="First Name *"
+                />
+              </div>
+              <div>
+                <ErrorMessage
+                  name="last_name"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
+                <Field
+                  type="text"
+                  name="last_name"
+                  className="mb-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-96 p-2.5"
+                  placeholder="Last Name *"
+                />
+              </div>
+              <div>
+                <ErrorMessage
+                  name="email"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
+                <Field
+                  type="email"
+                  name="email"
+                  className="mb-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-96 p-2.5"
+                  placeholder="Email Address *"
+                />
+              </div>
+              <div>
+                <ErrorMessage
+                  name="password"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
+                <Field
+                  type="password"
+                  name="password"
+                  className="mb-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-96 p-2.5"
+                  placeholder="Password *"
+                />
+              </div>
+              <div>
+                <ErrorMessage
+                  name="confirm_password"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
+                <Field
+                  type="password"
+                  name="confirm_password"
+                  className="mb-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-96 p-2.5"
+                  placeholder="Confirm Password *"
+                />
+              </div>
+              <div className="w-96 my-4">
+                <Field type="checkbox" name="marketing" />
+                <label htmlFor="marketing" className="pl-2">
+                  I agree to receive promotions, and other marketing materials
+                  via e-mail from{" "}
+                  <a href="/" className="text-blue-500">
+                    Integrity.com
+                  </a>
+                </label>
+              </div>
+              <div className="w-96 mb-4">
+                <ErrorMessage
+                  name="terms"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
+                <Field type="checkbox" name="terms" />
+                <label htmlFor="terms" className="pl-2">
+                  I confirm that I have read, and consent to Integrity.com{" "}
+                  <a href="#" className="text-blue-500">
+                    Terms and conditions and Privacy policy
+                  </a>
+                </label>
+              </div>
+              <div>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="text-white bg-custom-red hover:bg-red-500/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center justify-center"
+                >
+                  {isSubmitting ? "Submitting..." : "Sign Up"}
+                </button>
+              </div>
+              {error && (
+                <div className="text-red-500 text-sm mt-4">{error}</div>
+              )}
+            </Form>
+          )}
+        </Formik>
       </div>
     </div>
   );
