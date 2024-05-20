@@ -1,11 +1,16 @@
 import axios from "axios";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { validationSchema } from "../validation_schema";
+import { useAuth } from "../hooks/Authcontext";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Signup = () => {
   const [error, setError] = useState("");
+  const { login } = useAuth();
+  const navigate = useNavigate();
   const initialValues = {
     first_name: "",
     last_name: "",
@@ -14,9 +19,24 @@ const Signup = () => {
   };
 
   const handleSubmit = async (values, { setSubmit }) => {
-    // e.preventDefault();
     try {
-      await axios.post("http://localhost:8000/register", values);
+      const response = await axios.post(
+        "http://localhost:8000/register",
+        values
+      );
+      toast.success("User Added Successfully", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      login(response.data.token);
+      setTimeout(() => {
+        navigate("/");
+      }, 2500);
       setError("User Added Successfully");
     } catch (e) {
       console.error("error posting data", e);
@@ -31,6 +51,8 @@ const Signup = () => {
 
   return (
     <div className=" bg-custom-blue  text-white lg:px-24 md:px-12 flex">
+      <ToastContainer />
+
       {/* Left Section */}
       <div className="">
         <div className="pt-12">
