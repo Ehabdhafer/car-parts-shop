@@ -27,3 +27,15 @@ export const validationSchema = Yup.object().shape({
     .required("You must accept the terms and conditions")
     .oneOf([true], "You must accept the terms and conditions"),
 });
+
+export const validationlogin = Yup.object().shape({
+  email: Yup.string()
+    .required("Email is required")
+    .email("Invalid email format")
+    .min(10, "Email must be at least 10 characters")
+    .max(30, "Email must be at most 30 characters"),
+  password: Yup.string()
+    .required("Password is required")
+    .min(6, "Password must be at least 6 characters")
+    .max(30, "Password must be at most 30 characters"),
+});

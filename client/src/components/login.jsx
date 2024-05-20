@@ -2,7 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { validationSchema } from "../validation_schema";
+import { validationSchema, validationlogin } from "../validation_schema";
 
 const Login = () => {
   const [error, setError] = useState("");
@@ -105,7 +105,7 @@ const Login = () => {
         <p className="pb-4">---------------- OR ----------------</p>
         <Formik
           initialValues={initialValues}
-          validationSchema={validationSchema}
+          validationSchema={validationlogin}
           onSubmit={handleSubmit}
         >
           {({ isSubmitting }) => (
