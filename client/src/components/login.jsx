@@ -1,11 +1,16 @@
 import axios from "axios";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { validationSchema, validationlogin } from "../validation_schema";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "../hooks/Authcontext";
 
 const Login = () => {
   const [error, setError] = useState("");
+  const { login } = useAuth();
+  const navigate = useNavigate();
   const initialValues = {
     email: "",
     password: "",
@@ -14,8 +19,21 @@ const Login = () => {
   const handleSubmit = async (values, { setSubmit }) => {
     // e.preventDefault();
     try {
-      await axios.post("http://localhost:8000/login", values);
-      setError("Loggedin Successfully");
+      const response = await axios.post("http://localhost:8000/login", values);
+      toast.success("User Logged In Successfully", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      login(response.data.token);
+      setTimeout(() => {
+        navigate("/");
+      }, 2500);
+      setError("");
     } catch (e) {
       console.error("error posting data", e);
       if (e.response.status === 400) {
@@ -29,6 +47,7 @@ const Login = () => {
 
   return (
     <div className=" bg-custom-blue  text-white lg:px-24 md:px-12 flex">
+      <ToastContainer />
       {/* Left Section */}
       <div className="">
         <div className="pt-12">
@@ -136,11 +155,14 @@ const Login = () => {
                   placeholder="Password *"
                 />
               </div>
+              <button className="text-blue-500 mb-3">
+                <Link to={"#"}>Forgot Your Password?</Link>
+              </button>
               <div>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="text-white bg-custom-red hover:bg-red-500/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center justify-center"
+                  className="text-white bg-blue-500 hover:bg-blue-400/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center justify-center"
                 >
                   {isSubmitting ? "Submitting..." : "Login"}
                 </button>
